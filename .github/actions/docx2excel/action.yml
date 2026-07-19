@@ -1,0 +1,32 @@
+name: DOCX to Excel Action
+description: Convert a DOCX file to XLSX using docx2excel.py
+
+inputs:
+  input_docx:
+    description: Path to input DOCX file
+    required: true
+  output_xlsx:
+    description: Path to output XLSX file
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Validate input DOCX path
+      shell: pwsh
+      run: |
+        if (-not (Test-Path "${{ inputs.input_docx }}")) {
+          throw "Input DOCX file not found: ${{ inputs.input_docx }}"
+        }
+
+    - name: Run DOCX to Excel script
+      shell: pwsh
+      run: |
+        python docx2excel.py --docx "${{ inputs.input_docx }}" --output "${{ inputs.output_xlsx }}"
+
+    - name: Validate output XLSX path
+      shell: pwsh
+      run: |
+        if (-not (Test-Path "${{ inputs.output_xlsx }}")) {
+          throw "Output XLSX file was not generated: ${{ inputs.output_xlsx }}"
+        }
